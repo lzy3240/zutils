@@ -1,4 +1,4 @@
-package zutils_base
+package zutils
 
 import (
 	"errors"
