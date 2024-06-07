@@ -1,24 +1,26 @@
-package zutils
+package zutils_base
 
 import (
+	"errors"
 	"fmt"
 	"github.com/axgle/mahonia"
 	"reflect"
 	"strconv"
+	"time"
 )
 
-//判断string是否在slice内,使用map性能高
+// 判断string是否在slice内,使用map性能高
 func IsInSliceByMap(s string, sl []string) bool {
 	return isInMap(s, conVertSlice2Map(sl))
 }
 
-//判断map里是否存在
+// 判断map里是否存在
 func isInMap(s string, m map[string]struct{}) bool {
 	_, ok := m[s]
 	return ok
 }
 
-//转换slice为map
+// 转换slice为map
 func conVertSlice2Map(sl []string) map[string]struct{} {
 	m := make(map[string]struct{}, len(sl))
 	for _, v := range sl {
@@ -28,7 +30,7 @@ func conVertSlice2Map(sl []string) map[string]struct{} {
 	return m
 }
 
-//判断string是否在slice内
+// 判断string是否在slice内
 func IsInSlice(t string, tr []string) bool {
 	for _, v := range tr {
 		if t == v {
@@ -38,7 +40,7 @@ func IsInSlice(t string, tr []string) bool {
 	return false
 }
 
-//判断是否uft8
+// 判断是否uft8
 func IsUtf8(data []byte) bool {
 	for i := 0; i < len(data); {
 		if data[i]&0x80 == 0x00 {
@@ -80,7 +82,7 @@ func preNUm(data byte) int {
 	return i
 }
 
-//判断是否中文编码
+// 判断是否中文编码
 func IsGBK(data []byte) bool {
 	length := len(data)
 	var i int = 0
@@ -106,13 +108,13 @@ func IsGBK(data []byte) bool {
 	return true
 }
 
-//float64取指定位数
+// float64取指定位数
 func DecimalTwo(num float64) float64 {
 	num, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", num), 64)
 	return num
 }
 
-//struct2map
+// struct2map
 func StructToMap(in interface{}, tagName string) (map[string]interface{}, error) {
 	var out = make(map[string]interface{})
 	v := reflect.ValueOf(in)
@@ -136,7 +138,7 @@ func StructToMap(in interface{}, tagName string) (map[string]interface{}, error)
 	return out, nil
 }
 
-//字符串指定编码转换,如GBK转utf8
+// 字符串指定编码转换,如GBK转utf8
 func ConvertStringByCode(src string, srcCode string, tagCode string) string {
 	srcCoder := mahonia.NewDecoder(srcCode)
 	srcResult := srcCoder.ConvertString(src)
@@ -146,8 +148,8 @@ func ConvertStringByCode(src string, srcCode string, tagCode string) string {
 	return result
 }
 
-//类型断言
-func DecideType(src interface{}) (tbName string, err error) {
+// DecideType 类型断言..
+func DecideType(src interface{}) (string, error) {
 	tmp := ""
 	switch t := src.(type) {
 	case nil:
@@ -173,7 +175,7 @@ func DecideType(src interface{}) (tbName string, err error) {
 	case float64:
 		tmp = strconv.FormatFloat(t, 'f', -1, 64)
 	case string:
-		tmp = string(t)
+		tmp = t
 	default:
 		err := errors.New("no this type")
 		return tmp, err
